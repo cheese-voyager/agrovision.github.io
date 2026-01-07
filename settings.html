@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AgroVision — Pengaturan tampilan & preferensi (simulasi)." />
+  <title>AgroVision — Settings</title>
+
+  <!-- Tailwind CSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Global styles (sesuai ZIP: css/style.css) -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    .bg-grid {
+      background-image:
+        radial-gradient(circle at 1px 1px, rgba(15, 23, 42, 0.06) 1px, transparent 0);
+      background-size: 20px 20px;
+    }
+  </style>
+
+  <!-- Apply theme early (kompatibel dengan js/settings.js: agrovision-theme) -->
+  <script>
+    (function () {
+      try {
+        const theme = localStorage.getItem("agrovision-theme") || "light";
+        if (theme === "dark") {
+          document.documentElement.classList.add("dark");
+          document.body.classList.add("bg-slate-900", "text-slate-100");
+          document.body.classList.remove("bg-slate-50", "text-slate-900");
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.body.classList.add("bg-slate-50", "text-slate-900");
+          document.body.classList.remove("bg-slate-900", "text-slate-100");
+        }
+      } catch (e) {
+        /* ignore */
+      }
+    })();
+  </script>
+</head>
+
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-slate-900 dark:text-slate-100">
+  <!-- Top Bar -->
+  <header class="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur dark:border-slate-800/70 dark:bg-slate-900/70">
+    <div class="mx-auto max-w-7xl px-4">
+      <div class="flex h-14 items-center justify-between gap-3">
+        <!-- Brand -->
+        <a href="index.html" class="flex items-center gap-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+          <div class="grid h-9 w-9 place-items-center rounded-xl bg-green-600 text-white shadow-sm">
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 20A7 7 0 0 1 4 13V7a3 3 0 0 1 3-3h6a7 7 0 0 1 7 7v2a7 7 0 0 1-7 7h-2Z"></path>
+              <path d="M11 20v-8"></path>
+              <path d="M8 12c2 2 5 2 8 2"></path>
+            </svg>
+          </div>
+          <div class="leading-tight">
+            <p class="text-sm font-semibold tracking-tight text-slate-900 dark:text-slate-100">AgroVision</p>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Drone Soil Monitoring (Simulasi)</p>
+          </div>
+        </a>
+
+        <!-- Right side -->
+        <div class="flex items-center gap-2">
+          <div class="hidden sm:flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+            <span class="inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+            <span>Settings</span>
+          </div>
+
+          <a href="index.html"
+             class="hidden sm:inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+            <span aria-hidden="true">←</span>
+            <span>Dashboard</span>
+          </a>
+
+          <!-- Mobile menu button (dipakai oleh js/main.js) -->
+          <button id="mobile-menu-button"
+                  class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white p-2 text-slate-700 shadow-sm hover:bg-slate-50 md:hidden dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                  aria-label="Buka menu navigasi">
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5">
+              <path fill="currentColor" d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"></path>
+            </svg>
+          </button>
+
+          <!-- Avatar (desktop) -->
+          <div class="hidden md:flex items-center gap-3 pl-2">
+            <div class="text-right leading-tight">
+              <p class="text-xs font-semibold text-slate-800 dark:text-slate-100">Kelompok 06</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">Pemrograman Dasar</p>
+            </div>
+            <div class="h-9 w-9 rounded-xl bg-slate-200 dark:bg-slate-700"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu (di-toggle oleh js/main.js: #mobile-menu-button -> #mobile-menu) -->
+  <div id="mobile-menu" class="fixed inset-0 z-50 hidden md:hidden">
+    <button type="button"
+            class="absolute inset-0 h-full w-full bg-black/40"
+            aria-label="Tutup menu"
+            onclick="document.getElementById('mobile-menu').classList.add('hidden')"></button>
+
+    <div class="absolute left-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl dark:bg-slate-900">
+      <div class="flex items-center justify-between border-b border-slate-200 px-4 py-4 dark:border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="grid h-9 w-9 place-items-center rounded-xl bg-green-600 text-white">
+            <span aria-hidden="true">🌿</span>
+          </div>
+          <div class="leading-tight">
+            <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">AgroVision</p>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Menu</p>
+          </div>
+        </div>
+        <button type="button"
+                class="rounded-lg border border-slate-200 p-2 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800"
+                aria-label="Tutup"
+                onclick="document.getElementById('mobile-menu').classList.add('hidden')">
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5 text-slate-800 dark:text-slate-100">
+            <path fill="currentColor" d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"></path>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="p-4 text-sm">
+        <a href="index.html" class="flex items-center gap-3 rounded-xl px-3 py-2 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
+          <span aria-hidden="true">📊</span> Dashboard
+        </a>
+        <a href="control.html" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
+          <span aria-hidden="true">🎮</span> Control Panel
+        </a>
+        <a href="live.html" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
+          <span aria-hidden="true">📹</span> Live Camera
+        </a>
+        <a href="settings.html" class="mt-1 flex items-center gap-3 rounded-xl bg-green-50 px-3 py-2 font-medium text-green-700 dark:bg-green-900/30 dark:text-green-300">
+          <span aria-hidden="true">⚙️</span> Settings
+        </a>
+
+        <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300">
+          <p class="font-semibold text-slate-700 dark:text-slate-200">Info</p>
+          <p class="mt-1">Pengaturan disimpan di localStorage (simulasi).</p>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="bg-grid dark:bg-none">
+    <div class="mx-auto flex max-w-7xl gap-6 px-4 py-6">
+      <!-- Sidebar (desktop) -->
+      <aside class="hidden w-64 flex-col gap-4 md:flex">
+        <nav class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <a href="index.html" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
+            <span aria-hidden="true">📊</span> Dashboard
+          </a>
+          <a href="control.html" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
+            <span aria-hidden="true">🎮</span> Control Panel
+          </a>
+          <a href="live.html" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
+            <span aria-hidden="true">📹</span> Live Camera
+          </a>
+          <a href="settings.html" class="mt-1 flex items-center gap-3 rounded-xl bg-green-50 px-3 py-2 text-sm font-semibold text-green-700 dark:bg-green-900/30 dark:text-green-300">
+            <span aria-hidden="true">⚙️</span> Settings
+          </a>
+        </nav>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <p class="text-xs font-semibold text-slate-700 dark:text-slate-200">Tips</p>
+          <ul class="mt-3 space-y-2 text-xs text-slate-600 dark:text-slate-300">
+            <li class="flex gap-2"><span aria-hidden="true">🌓</span><span>Ubah tema untuk nyaman di kondisi terang/gelap.</span></li>
+            <li class="flex gap-2"><span aria-hidden="true">🌐</span><span>Bahasa hanya simulasi (teks belum diterjemahkan).</span></li>
+            <li class="flex gap-2"><span aria-hidden="true">🔒</span><span>Logout juga simulasi (tanpa token sesi).</span></li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Content -->
+      <main class="min-w-0 flex-1 space-y-6">
+        <!-- Page header -->
+        <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 class="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">Settings</h2>
+              <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">
+                Atur tema, bahasa, dan sesi (disimpan di localStorage).
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+                <span class="inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+                Simulasi Aktif
+              </span>
+              <a href="index.html"
+                 class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                <span aria-hidden="true">←</span> Kembali
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Settings grid -->
+        <section class="grid gap-4 lg:grid-cols-3">
+          <!-- Left: Main settings -->
+          <div class="lg:col-span-2 space-y-4">
+            <!-- Appearance -->
+            <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Appearance</h3>
+                  <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    Atur tema tampilan dashboard.
+                  </p>
+                </div>
+                <span class="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200">Theme</span>
+              </div>
+
+              <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                <button id="theme-light"
+                        type="button"
+                        class="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800">
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                      <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Light</p>
+                      <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Tampilan cerah (default).</p>
+                    </div>
+                    <span class="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200">☀️</span>
+                  </div>
+                  <div class="mt-4 text-xs text-slate-600 dark:text-slate-300">
+                    Cocok untuk ruangan terang.
+                  </div>
+                </button>
+
+                <button id="theme-dark"
+                        type="button"
+                        class="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800">
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                      <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Dark</p>
+                      <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Tampilan gelap yang nyaman.</p>
+                    </div>
+                    <span class="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200">🌙</span>
+                  </div>
+                  <div class="mt-4 text-xs text-slate-600 dark:text-slate-300">
+                    Cocok untuk malam/low-light.
+                  </div>
+                </button>
+              </div>
+
+              <div class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300">
+                <p class="font-semibold text-slate-700 dark:text-slate-200">Catatan</p>
+                <p class="mt-1">Tema disimpan di <code class="rounded bg-white px-1 py-0.5 dark:bg-slate-900">localStorage</code> dengan key <code class="rounded bg-white px-1 py-0.5 dark:bg-slate-900">agrovision-theme</code>.</p>
+              </div>
+            </div>
+
+            <!-- Language -->
+            <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Language</h3>
+                  <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    Pilih bahasa tampilan (simulasi).
+                  </p>
+                </div>
+                <span class="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200">Locale</span>
+              </div>
+
+              <div class="mt-4">
+                <label for="language-select" class="text-[11px] font-medium text-slate-600 dark:text-slate-300">Bahasa</label>
+                <select id="language-select"
+                        class="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100">
+                  <option value="id">Bahasa Indonesia</option>
+                  <option value="en">English</option>
+                </select>
+                <p class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
+                  *Saat ini hanya menyimpan preferensi dan menampilkan alert.
+                </p>
+              </div>
+            </div>
+
+            <!-- Session -->
+            <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Session</h3>
+                  <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    Kelola sesi login sederhana (simulasi).
+                  </p>
+                </div>
+                <span class="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200">Auth</span>
+              </div>
+
+              <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div class="text-xs text-slate-600 dark:text-slate-300">
+                  <p class="font-semibold text-slate-700 dark:text-slate-200">Logout</p>
+                  <p class="mt-1">Menampilkan alert (tanpa token sungguhan).</p>
+                </div>
+                <button id="logout-btn"
+                        type="button"
+                        class="inline-flex items-center justify-center rounded-2xl bg-red-500 px-4 py-3 text-xs font-semibold text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400">
+                  Log Out
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Account card -->
+          <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Account Information</h3>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  Informasi akun (simulasi).
+                </p>
+              </div>
+              <span class="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200">Profile</span>
+            </div>
+
+            <div class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-800/40">
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-2xl bg-slate-200 dark:bg-slate-700"></div>
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-semibold text-slate-900 dark:text-slate-100" id="acc-name">Kelompok 06 AgroVision</p>
+                  <p class="truncate text-xs text-slate-500 dark:text-slate-400" id="acc-email">kelompok06@example.com</p>
+                </div>
+              </div>
+
+              <div class="mt-4 grid gap-2 text-xs">
+                <div class="flex items-center justify-between rounded-xl bg-white px-3 py-2 dark:bg-slate-900">
+                  <span class="text-slate-600 dark:text-slate-300">Role</span>
+                  <span class="font-semibold text-slate-900 dark:text-slate-100" id="acc-role">Admin</span>
+                </div>
+                <div class="flex items-center justify-between rounded-xl bg-white px-3 py-2 dark:bg-slate-900">
+                  <span class="text-slate-600 dark:text-slate-300">Project</span>
+                  <span class="font-semibold text-slate-900 dark:text-slate-100">AgroVision</span>
+                </div>
+                <div class="flex items-center justify-between rounded-xl bg-white px-3 py-2 dark:bg-slate-900">
+                  <span class="text-slate-600 dark:text-slate-300">Status</span>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+                    <span class="inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+                    Active
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <a href="index.html"
+                 class="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-3 py-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                Dashboard
+              </a>
+              <a href="live.html"
+                 class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-3 py-3 text-xs font-semibold text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
+                Live
+              </a>
+            </div>
+
+            <p class="mt-4 text-[11px] text-slate-500 dark:text-slate-400">
+              *Kamu bisa ganti teks info akun ini sesuai anggota kelompok.
+            </p>
+          </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="pb-6 pt-2 text-center text-[11px] text-slate-500 dark:text-slate-400">
+          © <span id="year">2025</span> AgroVision • Kelompok 06 • Settings (Simulasi)
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const y = document.getElementById("year");
+      if (y) y.textContent = String(new Date().getFullYear());
+    })();
+  </script>
+
+  <!-- Scripts -->
+  <script src="js/settings.js"></script>
+  <script src="js/main.js"></script>
+
+  <!-- Bridge: settings.js cuma ubah body class, kita sinkronkan juga html.dark biar Tailwind dark: jalan -->
+  <script>
+    (function () {
+      function syncRootDark() {
+        try {
+          const theme = localStorage.getItem("agrovision-theme") || "light";
+          document.documentElement.classList.toggle("dark", theme === "dark");
+        } catch (e) {
+          /* ignore */
+        }
+      }
+
+      const lightBtn = document.getElementById("theme-light");
+      const darkBtn = document.getElementById("theme-dark");
+
+      if (lightBtn) lightBtn.addEventListener("click", syncRootDark);
+      if (darkBtn) darkBtn.addEventListener("click", syncRootDark);
+
+      window.addEventListener("storage", function (e) {
+        if (e && e.key === "agrovision-theme") syncRootDark();
+      });
+
+      syncRootDark();
+    })();
+  </script>
+</body>
+</html>

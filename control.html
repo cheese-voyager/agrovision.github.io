@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AgroVision — Control Panel untuk simulasi kontrol propeller drone." />
+  <title>AgroVision — Control Panel</title>
+
+  <!-- Tailwind CSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Global styles (sesuai ZIP: css/style.css) -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    .bg-grid {
+      background-image:
+        radial-gradient(circle at 1px 1px, rgba(15, 23, 42, 0.06) 1px, transparent 0);
+      background-size: 20px 20px;
+    }
+  </style>
+
+  <!-- Apply theme early (kompatibel dengan settings.js: agrovision-theme) -->
+  <script>
+    (function () {
+      try {
+        const theme = localStorage.getItem("agrovision-theme") || "light";
+        if (theme === "dark") {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      } catch (e) {
+        /* ignore */
+      }
+    })();
+  </script>
+</head>
+
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-slate-900 dark:text-slate-100">
+  <!-- Top Bar -->
+  <header class="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur dark:border-slate-800/70 dark:bg-slate-900/70">
+    <div class="mx-auto max-w-7xl px-4">
+      <div class="flex h-14 items-center justify-between gap-3">
+        <!-- Brand -->
+        <a href="index.html" class="flex items-center gap-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+          <div class="grid h-9 w-9 place-items-center rounded-xl bg-green-600 text-white shadow-sm">
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 20A7 7 0 0 1 4 13V7a3 3 0 0 1 3-3h6a7 7 0 0 1 7 7v2a7 7 0 0 1-7 7h-2Z"></path>
+              <path d="M11 20v-8"></path>
+              <path d="M8 12c2 2 5 2 8 2"></path>
+            </svg>
+          </div>
+          <div class="leading-tight">
+            <p class="text-sm font-semibold tracking-tight text-slate-900 dark:text-slate-100">AgroVision</p>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Drone Soil Monitoring (Simulasi)</p>
+          </div>
+        </a>
+
+        <!-- Right side -->
+        <div class="flex items-center gap-2">
+          <div class="hidden sm:flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+            <span class="inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+            <span>Control Ready</span>
+          </div>
+
+          <a href="settings.html"
+             class="hidden sm:inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+            <span aria-hidden="true">⚙️</span>
+            <span>Settings</span>
+          </a>
+
+          <!-- Mobile menu button (dipakai oleh js/main.js) -->
+          <button id="mobile-menu-button"
+                  class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white p-2 text-slate-700 shadow-sm hover:bg-slate-50 md:hidden dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                  aria-label="Buka menu navigasi">
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5">
+              <path fill="currentColor" d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"></path>
+            </svg>
+          </button>
+
+          <!-- Avatar (desktop) -->
+          <div class="hidden md:flex items-center gap-3 pl-2">
+            <div class="text-right leading-tight">
+              <p class="text-xs font-semibold text-slate-800 dark:text-slate-100">Kelompok 06</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">Pemrograman Dasar</p>
+            </div>
+            <div class="h-9 w-9 rounded-xl bg-slate-200 dark:bg-slate-700"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu (di-toggle oleh js/main.js: #mobile-menu-button -> #mobile-menu) -->
+  <div id="mobile-menu" class="fixed inset-0 z-50 hidden md:hidden">
+    <button type="button"
+            class="absolute inset-0 h-full w-full bg-black/40"
+            aria-label="Tutup menu"
+            onclick="document.getElementById('mobile-menu').classList.add('hidden')"></button>
+
+    <div class="absolute left-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl dark:bg-slate-900">
+      <div class="flex items-center justify-between border-b border-slate-200 px-4 py-4 dark:border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="grid h-9 w-9 place-items-center rounded-xl bg-green-600 text-white">
+            <span aria-hidden="true">🌿</span>
+          </div>
+          <div class="leading-tight">
+            <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">AgroVision</p>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Menu</p>
+          </div>
+        </div>
+        <button type="button"
+                class="rounded-lg border border-slate-200 p-2 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800"
+                aria-label="Tutup"
+                onclick="document.getElementById('mobile-menu').classList.add('hidden')">
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5 text-slate-800 dark:text-slate-100">
+            <path fill="currentColor" d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"></path>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="p-4 text-sm">
+        <a href="index.html" class="flex items-center gap-3 rounded-xl px-3 py-2 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
+          <span aria-hidden="true">📊</span> Dashboard
+        </a>
+        <a href="control.html" class="mt-1 flex items-center gap-3 rounded-xl bg-green-50 px-3 py-2 font-medium text-green-700 dark:bg-green-900/30 dark:text-green-300">
+          <span aria-hidden="true">🎮</span> Control Panel
+        </a>
+        <a href="live.html" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
+          <span aria-hidden="true">📹</span> Live Camera
+        </a>
+        <a href="settings.html" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
+          <span aria-hidden="true">⚙️</span> Settings
+        </a>
+
+        <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300">
+          <p class="font-semibold text-slate-700 dark:text-slate-200">Info</p>
+          <p class="mt-1">Panel ini simulasi. Klik propeller untuk ON/OFF dan lihat log aksi.</p>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="bg-grid dark:bg-none">
+    <div class="mx-auto flex max-w-7xl gap-6 px-4 py-6">
+      <!-- Sidebar (desktop) -->
+      <aside class="hidden w-64 flex-col gap-4 md:flex">
+        <nav class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <a href="index.html" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
+            <span aria-hidden="true">📊</span> Dashboard
+          </a>
+          <a href="control.html" class="mt-1 flex items-center gap-3 rounded-xl bg-green-50 px-3 py-2 text-sm font-semibold text-green-700 dark:bg-green-900/30 dark:text-green-300">
+            <span aria-hidden="true">🎮</span> Control Panel
+          </a>
+          <a href="live.html" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
+            <span aria-hidden="true">📹</span> Live Camera
+          </a>
+          <a href="settings.html" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
+            <span aria-hidden="true">⚙️</span> Settings
+          </a>
+        </nav>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <p class="text-xs font-semibold text-slate-700 dark:text-slate-200">Safety Checklist</p>
+          <ul class="mt-3 space-y-2 text-xs text-slate-600 dark:text-slate-300">
+            <li class="flex gap-2"><span aria-hidden="true">✅</span><span>Pastikan area aman sebelum “ON” semua propeller.</span></li>
+            <li class="flex gap-2"><span aria-hidden="true">✅</span><span>Gunakan log untuk verifikasi aksi terakhir.</span></li>
+            <li class="flex gap-2"><span aria-hidden="true">✅</span><span>Jika simulasi bermasalah, refresh halaman.</span></li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Content -->
+      <main class="min-w-0 flex-1 space-y-6">
+        <!-- Page header -->
+        <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 class="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">Control Panel</h2>
+              <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">
+                Simulasi tombol untuk mengontrol propeller drone (tanpa koneksi hardware).
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+                <span class="inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+                Mode Simulasi
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1 text-xs text-slate-600 dark:bg-slate-800/40 dark:text-slate-300">
+                <span aria-hidden="true">🖱️</span> Klik untuk ON/OFF
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Control Grid -->
+        <section class="grid gap-4 lg:grid-cols-3">
+          <!-- Controls -->
+          <div class="lg:col-span-2 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Propeller Controls</h3>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Status awal OFF. Klik kartu untuk toggle.</p>
+              </div>
+              <span class="hidden sm:inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+                <span aria-hidden="true">🎛️</span> Manual Toggle
+              </span>
+            </div>
+
+            <div class="mt-4 grid gap-4 md:grid-cols-2">
+              <!-- Propeller A -->
+              <button type="button"
+                      data-prop="A"
+                      class="prop-btn group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-green-500 hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Propeller A</p>
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Motor kiri-depan</p>
+                  </div>
+                  <span class="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                    <span class="status-text">OFF</span>
+                  </span>
+                </div>
+                <div class="mt-4 flex items-center justify-between">
+                  <span class="text-xs text-slate-600 dark:text-slate-300">Klik untuk toggle</span>
+                  <span class="text-xs font-medium text-green-700 opacity-0 transition group-hover:opacity-100 dark:text-green-300">Toggle →</span>
+                </div>
+                <div class="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-green-500/10 blur-2xl"></div>
+              </button>
+
+              <!-- Propeller B -->
+              <button type="button"
+                      data-prop="B"
+                      class="prop-btn group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-green-500 hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Propeller B</p>
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Motor kanan-depan</p>
+                  </div>
+                  <span class="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                    <span class="status-text">OFF</span>
+                  </span>
+                </div>
+                <div class="mt-4 flex items-center justify-between">
+                  <span class="text-xs text-slate-600 dark:text-slate-300">Klik untuk toggle</span>
+                  <span class="text-xs font-medium text-green-700 opacity-0 transition group-hover:opacity-100 dark:text-green-300">Toggle →</span>
+                </div>
+                <div class="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-green-500/10 blur-2xl"></div>
+              </button>
+
+              <!-- Propeller C -->
+              <button type="button"
+                      data-prop="C"
+                      class="prop-btn group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-green-500 hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Propeller C</p>
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Motor kiri-belakang</p>
+                  </div>
+                  <span class="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                    <span class="status-text">OFF</span>
+                  </span>
+                </div>
+                <div class="mt-4 flex items-center justify-between">
+                  <span class="text-xs text-slate-600 dark:text-slate-300">Klik untuk toggle</span>
+                  <span class="text-xs font-medium text-green-700 opacity-0 transition group-hover:opacity-100 dark:text-green-300">Toggle →</span>
+                </div>
+                <div class="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-green-500/10 blur-2xl"></div>
+              </button>
+
+              <!-- Propeller D -->
+              <button type="button"
+                      data-prop="D"
+                      class="prop-btn group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-green-500 hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Propeller D</p>
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Motor kanan-belakang</p>
+                  </div>
+                  <span class="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                    <span class="status-text">OFF</span>
+                  </span>
+                </div>
+                <div class="mt-4 flex items-center justify-between">
+                  <span class="text-xs text-slate-600 dark:text-slate-300">Klik untuk toggle</span>
+                  <span class="text-xs font-medium text-green-700 opacity-0 transition group-hover:opacity-100 dark:text-green-300">Toggle →</span>
+                </div>
+                <div class="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-green-500/10 blur-2xl"></div>
+              </button>
+
+              <!-- All Propellers -->
+              <button type="button"
+                      id="all-propellers"
+                      class="relative overflow-hidden rounded-2xl bg-green-600 p-5 text-left text-white shadow-sm transition hover:bg-green-700 md:col-span-2">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <p class="text-sm font-semibold">All Propeller</p>
+                    <p class="mt-1 text-xs text-green-100">
+                      Klik untuk menyalakan / mematikan semua propeller sekaligus.
+                    </p>
+                  </div>
+                  <span class="rounded-full bg-white/15 px-2 py-1 text-[11px]">Bulk Toggle</span>
+                </div>
+
+                <div class="mt-4 flex flex-wrap items-center gap-2">
+                  <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs">
+                    <span aria-hidden="true">⚡</span> Cepat
+                  </span>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs">
+                    <span aria-hidden="true">🧾</span> Auto log
+                  </span>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs">
+                    <span aria-hidden="true">🧪</span> Simulasi
+                  </span>
+                </div>
+
+                <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/20 blur-2xl"></div>
+              </button>
+            </div>
+
+            <div class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300">
+              <p class="font-semibold text-slate-700 dark:text-slate-200">Catatan</p>
+              <p class="mt-1">
+                Status dan log dihasilkan dari JavaScript lokal (<code class="rounded bg-white px-1 py-0.5 dark:bg-slate-900">js/control.js</code>).
+                Tidak ada komunikasi ke perangkat nyata.
+              </p>
+            </div>
+          </div>
+
+          <!-- Log -->
+          <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Log Aksi</h3>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Aksi terbaru akan muncul di paling atas.</p>
+              </div>
+              <span class="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                Realtime
+              </span>
+            </div>
+
+            <div class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-800/40">
+              <ul id="log-list" class="space-y-2 max-h-80 overflow-y-auto pr-1 text-xs text-slate-700 dark:text-slate-200">
+                <!-- log aksi via JS -->
+              </ul>
+
+              <div class="mt-3 flex items-center justify-between gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                <span>Tip: coba toggle A → B → All</span>
+                <span id="log-hint" class="hidden sm:inline">Scroll untuk lihat riwayat</span>
+              </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <a href="index.html"
+                 class="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-3 py-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                Kembali
+              </a>
+              <a href="live.html"
+                 class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-3 py-3 text-xs font-semibold text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
+                Live Camera
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="pb-6 pt-2 text-center text-[11px] text-slate-500 dark:text-slate-400">
+          © <span id="year">2025</span> AgroVision • Kelompok 06 • Simulasi Control Panel
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const y = document.getElementById("year");
+      if (y) y.textContent = String(new Date().getFullYear());
+    })();
+  </script>
+
+  <!-- Scripts -->
+  <script src="js/control.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

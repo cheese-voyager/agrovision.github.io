@@ -1,0 +1,5 @@
+/* css/styles.css */
+body {
+  /* contoh: ganti font global kalau mau */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
