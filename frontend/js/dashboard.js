@@ -6,6 +6,75 @@ const timeFilterLabel = document.querySelector("#time-filter-label");
 const altitudeCanvas = document.querySelector("#altitude-chart");
 const soilStatusLabel = document.querySelector("#soil-status-label");
 
+// NEW: Orientation elements (Pitch / Yaw / Roll)
+const pitchEl = document.querySelector("#drone-pitch");
+const yawEl = document.querySelector("#drone-yaw");
+const rollEl = document.querySelector("#drone-roll");
+
+// ------------------------------
+// Helper functions
+// ------------------------------
+function clamp(n, min, max) {
+  return Math.max(min, Math.min(max, n));
+}
+
+function rand(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+// Smooth transition (lerp)
+function lerp(a, b, t) {
+  return a + (b - a) * t;
+}
+
+// ------------------------------
+// Pitch / Yaw / Roll Simulation
+// ------------------------------
+let orientation = {
+  pitch: 0,
+  yaw: 120,
+  roll: 0,
+};
+
+let targetOrientation = {
+  pitch: 0,
+  yaw: 120,
+  roll: 0,
+};
+
+// generate new target every few seconds
+function refreshOrientationTarget() {
+  targetOrientation.pitch = rand(-8, 8);  // pitch: -8° to 8°
+  targetOrientation.roll = rand(-8, 8);   // roll: -8° to 8°
+  targetOrientation.yaw = (targetOrientation.yaw + rand(-25, 25)) % 360; // yaw: 0-360
+  if (targetOrientation.yaw < 0) targetOrientation.yaw += 360;
+}
+
+// update values smoothly
+function updateOrientation() {
+  if (!pitchEl || !yawEl || !rollEl) return;
+
+  // smooth interpolation
+  orientation.pitch = lerp(orientation.pitch, targetOrientation.pitch, 0.15);
+  orientation.roll = lerp(orientation.roll, targetOrientation.roll, 0.15);
+
+  // yaw should rotate smoothly but wrap correctly
+  let yawDiff = targetOrientation.yaw - orientation.yaw;
+  if (yawDiff > 180) yawDiff -= 360;
+  if (yawDiff < -180) yawDiff += 360;
+  orientation.yaw = (orientation.yaw + yawDiff * 0.15) % 360;
+  if (orientation.yaw < 0) orientation.yaw += 360;
+
+  // display
+  pitchEl.textContent = `${orientation.pitch.toFixed(1)}°`;
+  yawEl.textContent = `${orientation.yaw.toFixed(0)}°`;
+  rollEl.textContent = `${orientation.roll.toFixed(1)}°`;
+}
+
+// ------------------------------
+// Altitude chart simulation
+// ------------------------------
+
 // Fungsi buat generate data dummy altitude
 function generateAltitudeData(range) {
   // range: "1h", "6h", "24h", "7d"
@@ -139,7 +208,21 @@ if (timeFilter) {
   });
 }
 
+// ------------------------------
+// INIT
+// ------------------------------
+
 // Inisialisasi awal
 initChart("1h");
 updateTimeLabel("1h");
 updateSoilStatus();
+
+// Orientation init
+refreshOrientationTarget();
+updateOrientation();
+
+// Update orientation frequently (smooth)
+setInterval(updateOrientation, 500);
+
+// Change target orientation every 3 seconds
+setInterval(refreshOrientationTarget, 3000);

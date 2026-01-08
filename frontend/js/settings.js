@@ -113,7 +113,15 @@ if (languageSelect) languageSelect.addEventListener("change", () => setLanguage(
 
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
-    alert("Signed out (simulation). In a real system, this would clear your session token.");
+    const lang = (window.AgroVisionI18N && window.AgroVisionI18N.getLocale)
+  ? window.AgroVisionI18N.getLocale()
+  : "en";
+
+if (lang === "id") {
+  alert("Keluar (simulasi). Pada sistem nyata, ini akan menghapus token sesi Anda.");
+} else {
+  alert("Signed out (simulation). In a real system, this would clear your session token.");
+}
   });
 }
 
