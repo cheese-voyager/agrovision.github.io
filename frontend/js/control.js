@@ -4,7 +4,7 @@ const propButtons = document.querySelectorAll(".prop-btn");
 const allButton = document.querySelector("#all-propellers");
 const logList = document.querySelector("#log-list");
 
-// Simpan status tiap propeller
+// Store each propeller state
 const propellerStatus = {
   A: false,
   B: false,
@@ -12,10 +12,18 @@ const propellerStatus = {
   D: false,
 };
 
+function nowTime() {
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  const ss = String(d.getSeconds()).padStart(2, "0");
+  return `${hh}:${mm}:${ss}`;
+}
+
 function addLog(message) {
   if (!logList) return;
   const li = document.createElement("li");
-  li.textContent = message;
+  li.textContent = `[${nowTime()}] ${message}`;
   logList.prepend(li); // prepend biar yang terbaru di atas
 }
 
@@ -43,17 +51,17 @@ propButtons.forEach((btn) => {
     propellerStatus[prop] = newStatus;
 
     updateButtonVisual(btn, newStatus);
-    addLog(`Propeller ${prop} di-${newStatus ? "ON" : "OFF"}-kan`);
+    addLog(`Propeller ${prop} turned ${newStatus ? "ON" : "OFF"}`);
   });
 });
 
 // Event untuk All Propeller
 if (allButton) {
   allButton.addEventListener("click", () => {
-    // cek apakah sebagian besar OFF ? kalau iya -> ON semua, kalau tidak -> OFF semua
+    // UX: if ALL are ON => turn OFF; otherwise turn ON all
     const values = Object.values(propellerStatus);
-    const onCount = values.filter((v) => v).length;
-    const turnOn = onCount === 0;
+    const allOn = values.every(Boolean);
+    const turnOn = !allOn;
 
     propButtons.forEach((btn) => {
       const prop = btn.getAttribute("data-prop");
@@ -61,6 +69,6 @@ if (allButton) {
       updateButtonVisual(btn, turnOn);
     });
 
-    addLog(turnOn ? "Semua propeller ON" : "Semua propeller OFF");
+    addLog(turnOn ? "All propellers turned ON" : "All propellers turned OFF");
   });
 }

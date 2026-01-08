@@ -1,6 +1,6 @@
 console.log("Dashboard JS loaded");
 
-// Elemen-elemen yang sering dipakai
+// Common elements (guarded so the script won't error if the DOM changes)
 const timeFilter = document.querySelector("#time-filter");
 const timeFilterLabel = document.querySelector("#time-filter-label");
 const altitudeCanvas = document.querySelector("#altitude-chart");
@@ -8,7 +8,7 @@ const soilStatusLabel = document.querySelector("#soil-status-label");
 
 // Fungsi buat generate data dummy altitude
 function generateAltitudeData(range) {
-  // range bisa: "1h", "6h", "24h", "7d"
+  // range: "1h", "6h", "24h", "7d"
   let points;
 
   switch (range) {
@@ -32,8 +32,8 @@ function generateAltitudeData(range) {
   const data = [];
 
   for (let i = 0; i < points; i++) {
-    labels.push(`T${i + 1}`);
-    // ketinggian random 10-60 meter
+    labels.push(`P${i + 1}`);
+    // random altitude 10-60m
     data.push(10 + Math.round(Math.random() * 50));
   }
 
@@ -44,6 +44,11 @@ function generateAltitudeData(range) {
 let altitudeChart;
 
 function initChart(range) {
+  if (!altitudeCanvas) return;
+  if (typeof Chart === "undefined") {
+    console.warn("Chart.js is not available. Make sure the CDN script is loaded.");
+    return;
+  }
   const { labels, data } = generateAltitudeData(range);
 
   if (altitudeChart) {
@@ -87,35 +92,38 @@ function initChart(range) {
   });
 }
 
-// Update label filter waktu
+// Update time range label
 function updateTimeLabel(range) {
   let text = "";
   switch (range) {
     case "1h":
-      text = "1 Jam Terakhir";
+      text = "Last 1 hour";
       break;
     case "6h":
-      text = "6 Jam Terakhir";
+      text = "Last 6 hours";
       break;
     case "24h":
-      text = "24 Jam Terakhir";
+      text = "Last 24 hours";
       break;
     case "7d":
-      text = "7 Hari Terakhir";
+      text = "Last 7 days";
       break;
+    default:
+      text = "Last 1 hour";
   }
-  timeFilterLabel.textContent = text;
+  if (timeFilterLabel) timeFilterLabel.textContent = text;
 }
 
-// Simulasi status kelayakan tanah
+// Simulate soil suitability
 function updateSoilStatus() {
+  if (!soilStatusLabel) return;
   const nilai = Math.random(); // 0–1
   if (nilai > 0.4) {
-    soilStatusLabel.textContent = "Layak Tanam";
+    soilStatusLabel.textContent = "Suitable";
     soilStatusLabel.className =
       "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700";
   } else {
-    soilStatusLabel.textContent = "Tidak Layak Tanam";
+    soilStatusLabel.textContent = "Not Suitable";
     soilStatusLabel.className =
       "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700";
   }

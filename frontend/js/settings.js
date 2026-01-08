@@ -5,52 +5,135 @@ const themeDarkBtn = document.querySelector("#theme-dark");
 const languageSelect = document.querySelector("#language-select");
 const logoutBtn = document.querySelector("#logout-btn");
 
-// Simpel: kita simpan preferensi di localStorage
-function setTheme(theme) {
-  if (theme === "dark") {
-    document.body.classList.add("bg-slate-900", "text-slate-100");
-    document.body.classList.remove("bg-slate-50", "text-slate-900");
-  } else {
-    document.body.classList.add("bg-slate-50", "text-slate-900");
-    document.body.classList.remove("bg-slate-900", "text-slate-100");
+function setActiveThemeCard(theme) {
+  const activeClasses = ["ring-2", "ring-green-500", "border-green-500"];
+  const inactiveClasses = ["ring-0", "ring-transparent", "border-slate-200", "dark:border-slate-800"];
+
+  const setCard = (btn, isActive) => {
+    if (!btn) return;
+    btn.setAttribute("aria-pressed", String(isActive));
+    btn.classList.toggle("ring-2", isActive);
+    btn.classList.toggle("ring-green-500", isActive);
+    btn.classList.toggle("border-green-500", isActive);
+  };
+
+  setCard(themeLightBtn, theme === "light");
+  setCard(themeDarkBtn, theme === "dark");
+
+  // Clean up any accidental ring classes (for safety)
+  if (theme === "light" && themeDarkBtn) {
+    themeDarkBtn.classList.remove(...activeClasses);
   }
-  localStorage.setItem("agrovision-theme", theme);
+  if (theme === "dark" && themeLightBtn) {
+    themeLightBtn.classList.remove(...activeClasses);
+  }
+  // Remove unused helper classes (if present)
+  if (themeLightBtn) themeLightBtn.classList.remove(...inactiveClasses);
+  if (themeDarkBtn) themeDarkBtn.classList.remove(...inactiveClasses);
+}
+
+// Persist theme and toggle dark mode (delegates to js/main.js if available)
+function setTheme(theme) {
+  const t = theme === "dark" ? "dark" : "light";
+  if (window.AgroVisionTheme && typeof window.AgroVisionTheme.setTheme === "function") {
+    window.AgroVisionTheme.setTheme(t);
+    setActiveThemeCard(t);
+    return;
+  }
+
+  // Fallback (should rarely be used)
+  try {
+    localStorage.setItem("agrovision-theme", t);
+  } catch (e) {
+    /* ignore */
+  }
+  document.documentElement.classList.toggle("dark", t === "dark");
+  document.documentElement.setAttribute("data-theme", t);
+  document.documentElement.style.colorScheme = t;
+  setActiveThemeCard(t);
 }
 
 function loadTheme() {
-  const theme = localStorage.getItem("agrovision-theme") || "light";
+  // Prefer reading the actual DOM state (because main.js may apply system pref)
+  if (window.AgroVisionTheme && typeof window.AgroVisionTheme.getTheme === "function") {
+    const t = window.AgroVisionTheme.getTheme();
+    setActiveThemeCard(t);
+    return;
+  }
+
+  let theme = "light";
+  try {
+    theme = localStorage.getItem("agrovision-theme") || "light";
+  } catch (e) {
+    /* ignore */
+  }
   setTheme(theme);
 }
 
 function setLanguage(lang) {
-  localStorage.setItem("agrovision-lang", lang);
-  alert("Bahasa di-set ke: " + (lang === "id" ? "Bahasa Indonesia" : "English") +
-    " (simulasi, teks belum benar-benar diterjemahkan).");
-}
+  const locale = lang === "id" ? "id" : "en";
+  // Save + apply via the global i18n helper (js/i18n.js)
+  if (window.AgroVisionI18N && typeof window.AgroVisionI18N.setLocale === "function") {
+    window.AgroVisionI18N.setLocale(locale, { reload: true });
+    return;
+  }
 
-function loadLanguage() {
-  const lang = localStorage.getItem("agrovision-lang") || "id";
-  if (languageSelect) {
-    languageSelect.value = lang;
+  // Fallback: persist only
+  try {
+    localStorage.setItem("agrovision-lang", locale);
+  } catch (e) {
+    /* ignore */
+  }
+  // Fallback UX: reload so other pages read the preference
+  try {
+    window.location.reload();
+  } catch (e) {
+    /* ignore */
   }
 }
 
-// Event handler
-if (themeLightBtn) {
-  themeLightBtn.addEventListener("click", () => setTheme("light"));
+function loadLanguage() {
+  let lang = "en";
+  if (window.AgroVisionI18N && typeof window.AgroVisionI18N.getLocale === "function") {
+    lang = window.AgroVisionI18N.getLocale();
+  } else {
+    try {
+      lang = localStorage.getItem("agrovision-lang") || "en";
+    } catch (e) {
+      /* ignore */
+    }
+  }
+  if (languageSelect) languageSelect.value = lang;
 }
-if (themeDarkBtn) {
-  themeDarkBtn.addEventListener("click", () => setTheme("dark"));
-}
-if (languageSelect) {
-  languageSelect.addEventListener("change", () => setLanguage(languageSelect.value));
-}
+
+// Event handlers
+if (themeLightBtn) themeLightBtn.addEventListener("click", () => setTheme("light"));
+if (themeDarkBtn) themeDarkBtn.addEventListener("click", () => setTheme("dark"));
+if (languageSelect) languageSelect.addEventListener("change", () => setLanguage(languageSelect.value));
+
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
-    alert("Logout berhasil (simulasi). Di sistem nyata, ini akan menghapus token sesi.");
+    alert("Signed out (simulation). In a real system, this would clear your session token.");
   });
 }
 
-// Inisialisasi di awal
+// Keep theme in sync if localStorage changes in another tab
+window.addEventListener("storage", (e) => {
+  if (!e) return;
+  if (e.key === "agrovision-theme") loadTheme();
+  if (e.key === "agrovision-lang") loadLanguage();
+});
+
+// Keep in sync if theme is changed via header toggle
+window.addEventListener("agrovision:themechange", (e) => {
+  try {
+    const t = e && e.detail && e.detail.theme ? e.detail.theme : null;
+    if (t) setActiveThemeCard(t);
+  } catch (err) {
+    /* ignore */
+  }
+});
+
+// Init
 loadTheme();
 loadLanguage();

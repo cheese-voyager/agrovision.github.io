@@ -1,15 +1,23 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="AgroVision — Live Camera dan status tanah (simulasi)." />
+  <meta name="description" content="AgroVision — Live camera view and soil status (simulation)." />
   <title>AgroVision — Live Camera</title>
 
-  <!-- Tailwind CSS (CDN) -->
+  <!-- Tailwind (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Enable class-based dark mode (required for manual theme toggle)
+    try {
+      tailwind.config = { darkMode: "class" };
+    } catch (e) {
+      /* ignore */
+    }
+  </script>
 
-  <!-- Global styles (sesuai ZIP: css/style.css) -->
+  <!-- Global styles -->
   <link rel="stylesheet" href="css/style.css" />
 
   <style>
@@ -18,28 +26,19 @@
         radial-gradient(circle at 1px 1px, rgba(15, 23, 42, 0.06) 1px, transparent 0);
       background-size: 20px 20px;
     }
-
-    /* Biar pill dari live.js tetap enak dilihat saat dark mode (live.js set className hardcoded) */
-    .dark .bg-green-50 { background-color: rgba(16, 185, 129, 0.12) !important; }
-    .dark .text-green-700 { color: rgb(167, 243, 208) !important; }
-    .dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.12) !important; }
-    .dark .text-red-700 { color: rgb(254, 202, 202) !important; }
   </style>
 
-  <!-- Apply theme early (kompatibel dengan settings.js: agrovision-theme) -->
+  <!-- Apply saved theme early (prevents flash) -->
   <script>
     (function () {
       try {
-        const theme = localStorage.getItem("agrovision-theme") || "light";
-        if (theme === "dark") {
-          document.documentElement.classList.add("dark");
-          document.body.classList.add("bg-slate-900", "text-slate-100");
-          document.body.classList.remove("bg-slate-50", "text-slate-900");
-        } else {
-          document.documentElement.classList.remove("dark");
-          document.body.classList.add("bg-slate-50", "text-slate-900");
-          document.body.classList.remove("bg-slate-900", "text-slate-100");
-        }
+        const saved = localStorage.getItem("agrovision-theme");
+        const theme = saved === "light" || saved === "dark"
+          ? saved
+          : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.classList.toggle("dark", theme === "dark");
+        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.style.colorScheme = theme === "dark" ? "dark" : "light";
       } catch (e) {
         /* ignore */
       }
@@ -63,7 +62,7 @@
           </div>
           <div class="leading-tight">
             <p class="text-sm font-semibold tracking-tight text-slate-900 dark:text-slate-100">AgroVision</p>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400">Drone Soil Monitoring (Simulasi)</p>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Drone Soil Monitoring (Simulation)</p>
           </div>
         </a>
 
@@ -74,16 +73,24 @@
             <span>LIVE View</span>
           </div>
 
+          <!-- Theme toggle (handled by js/main.js) -->
+          <button type="button" data-theme-toggle
+                  class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white p-2 text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                  aria-label="Toggle theme">
+            <span data-theme-icon aria-hidden="true">☀️</span>
+            <span class="sr-only">Toggle theme</span>
+          </button>
+
           <a href="settings.html"
              class="hidden sm:inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
             <span aria-hidden="true">⚙️</span>
             <span>Settings</span>
           </a>
 
-          <!-- Mobile menu button (dipakai oleh js/main.js) -->
+          <!-- Mobile menu button (used by js/main.js) -->
           <button id="mobile-menu-button"
                   class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white p-2 text-slate-700 shadow-sm hover:bg-slate-50 md:hidden dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
-                  aria-label="Buka menu navigasi">
+                  aria-label="Open navigation menu">
             <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5">
               <path fill="currentColor" d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"></path>
             </svg>
@@ -92,8 +99,8 @@
           <!-- Avatar (desktop) -->
           <div class="hidden md:flex items-center gap-3 pl-2">
             <div class="text-right leading-tight">
-              <p class="text-xs font-semibold text-slate-800 dark:text-slate-100">Kelompok 06</p>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400">Pemrograman Dasar</p>
+              <p class="text-xs font-semibold text-slate-800 dark:text-slate-100">Team 06</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">Basic Programming</p>
             </div>
             <div class="h-9 w-9 rounded-xl bg-slate-200 dark:bg-slate-700"></div>
           </div>
@@ -102,11 +109,11 @@
     </div>
   </header>
 
-  <!-- Mobile Menu (di-toggle oleh js/main.js: #mobile-menu-button -> #mobile-menu) -->
+  <!-- Mobile Menu (toggled by js/main.js: #mobile-menu-button -> #mobile-menu) -->
   <div id="mobile-menu" class="fixed inset-0 z-50 hidden md:hidden">
     <button type="button"
             class="absolute inset-0 h-full w-full bg-black/40"
-            aria-label="Tutup menu"
+            aria-label="Close menu"
             onclick="document.getElementById('mobile-menu').classList.add('hidden')"></button>
 
     <div class="absolute left-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl dark:bg-slate-900">
@@ -122,7 +129,7 @@
         </div>
         <button type="button"
                 class="rounded-lg border border-slate-200 p-2 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800"
-                aria-label="Tutup"
+                aria-label="Close"
                 onclick="document.getElementById('mobile-menu').classList.add('hidden')">
           <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5 text-slate-800 dark:text-slate-100">
             <path fill="currentColor" d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"></path>
@@ -146,7 +153,7 @@
 
         <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300">
           <p class="font-semibold text-slate-700 dark:text-slate-200">Info</p>
-          <p class="mt-1">Tampilan kamera masih dummy. Status tanah dihasilkan acak oleh <code class="rounded bg-white px-1 py-0.5 dark:bg-slate-900">js/live.js</code>.</p>
+          <p class="mt-1">The camera view is a placeholder. Soil status is randomized by <code class="rounded bg-white px-1 py-0.5 dark:bg-slate-900">js/live.js</code>.</p>
         </div>
       </nav>
     </div>
@@ -175,9 +182,9 @@
         <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <p class="text-xs font-semibold text-slate-700 dark:text-slate-200">Quick Guide</p>
           <ul class="mt-3 space-y-2 text-xs text-slate-600 dark:text-slate-300">
-            <li class="flex gap-2"><span aria-hidden="true">🟢</span><span>“LIVE” hanya indikator tampilan (simulasi).</span></li>
-            <li class="flex gap-2"><span aria-hidden="true">💧</span><span>Klik “Refresh Data” untuk update kelembapan/suhu.</span></li>
-            <li class="flex gap-2"><span aria-hidden="true">📷</span><span>Area kamera bisa diisi video/gambar dummy.</span></li>
+            <li class="flex gap-2"><span aria-hidden="true">🟢</span><span>“LIVE” is a visual indicator only (simulation).</span></li>
+            <li class="flex gap-2"><span aria-hidden="true">💧</span><span>Click “Refresh Data” to update moisture/temperature.</span></li>
+            <li class="flex gap-2"><span aria-hidden="true">📷</span><span>You can place a dummy video/image in the camera area.</span></li>
           </ul>
         </div>
       </aside>
@@ -190,14 +197,14 @@
             <div>
               <h2 class="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">Live Camera</h2>
               <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">
-                Tampilan kondisi lahan dan status tanah (simulasi).
+                Field view and soil status (simulation).
               </p>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
               <span class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
                 <span class="inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
-                ● LIVE (Simulasi)
+                ● LIVE (Simulation)
               </span>
               <a href="control.html"
                  class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
@@ -214,61 +221,52 @@
             <div class="flex items-start justify-between gap-3">
               <div>
                 <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Soil Status</h3>
-                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                  Kelembapan, suhu, dan kelayakan tanah (diacak oleh JS).
-                </p>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Moisture, temperature, and suitability (randomized by JS).</p>
               </div>
-              <span class="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200">
-                Realtime
-              </span>
+              <span class="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200">Realtime</span>
             </div>
 
             <div class="mt-4 space-y-4">
               <!-- Moisture -->
               <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-800/40">
                 <div class="flex items-center justify-between text-xs">
-                  <span class="text-slate-600 dark:text-slate-300">Kelembapan Tanah</span>
+                  <span class="text-slate-600 dark:text-slate-300">Soil Moisture</span>
                   <span id="live-soil-moisture" class="font-semibold text-slate-900 dark:text-slate-100">--%</span>
                 </div>
                 <div class="mt-3 h-2 w-full rounded-full bg-slate-200 dark:bg-slate-700">
                   <div id="live-soil-moisture-bar" class="h-2 rounded-full bg-green-500" style="width: 50%;"></div>
                 </div>
-                <p class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
-                  Ideal: 40% – 70% (simulasi).
-                </p>
+                <p class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Ideal: 40% – 70% (simulation).</p>
               </div>
 
               <!-- Temp + Status -->
               <div class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
                 <div class="flex items-center justify-between text-xs">
-                  <span class="text-slate-600 dark:text-slate-300">Suhu Tanah</span>
+                  <span class="text-slate-600 dark:text-slate-300">Soil Temperature</span>
                   <span id="live-soil-temp" class="font-semibold text-slate-900 dark:text-slate-100">--°C</span>
                 </div>
 
                 <div class="mt-3 flex items-center justify-between gap-3 text-xs">
                   <span class="text-slate-600 dark:text-slate-300">Status</span>
-                  <!-- ID ini dipakai js/live.js (className akan di-set ulang oleh JS) -->
-                  <span id="live-soil-status"
-                        class="inline-flex items-center px-2 py-1 rounded-full bg-green-50 text-green-700 font-semibold">
-                    --
-                  </span>
+                  <!-- Used by js/live.js (className is set by JS) -->
+                  <span id="live-soil-status" class="inline-flex items-center px-2 py-1 rounded-full bg-green-50 text-green-700 font-semibold">--</span>
                 </div>
 
                 <div class="mt-4 grid grid-cols-2 gap-2">
                   <div class="rounded-xl bg-slate-50 p-3 text-[11px] text-slate-600 dark:bg-slate-800/40 dark:text-slate-300">
-                    <p class="font-semibold text-slate-700 dark:text-slate-200">Catatan</p>
-                    <p class="mt-1">Status berubah otomatis setiap refresh.</p>
+                    <p class="font-semibold text-slate-700 dark:text-slate-200">Note</p>
+                    <p class="mt-1">Status updates on each refresh.</p>
                   </div>
                   <div class="rounded-xl bg-slate-50 p-3 text-[11px] text-slate-600 dark:bg-slate-800/40 dark:text-slate-300">
-                    <p class="font-semibold text-slate-700 dark:text-slate-200">Sumber</p>
-                    <p class="mt-1">Random data (simulasi).</p>
+                    <p class="font-semibold text-slate-700 dark:text-slate-200">Source</p>
+                    <p class="mt-1">Random data (simulation).</p>
                   </div>
                 </div>
               </div>
 
               <button id="refresh-soil"
                       class="w-full rounded-2xl bg-green-600 px-4 py-3 text-xs font-semibold text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
-                Refresh Data (Simulasi)
+                Refresh Data (Simulation)
               </button>
             </div>
           </div>
@@ -278,9 +276,7 @@
             <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Farm Overview — Live Camera</h3>
-                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                  Stream kamera belum terhubung (gunakan placeholder/dummy).
-                </p>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Camera stream is not connected yet (placeholder only).</p>
               </div>
 
               <div class="flex flex-wrap items-center gap-2">
@@ -290,7 +286,7 @@
                 </span>
                 <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
                   <span aria-hidden="true">📡</span>
-                  Telemetry: Simulasi
+                  Telemetry: Simulation
                 </span>
               </div>
             </div>
@@ -309,7 +305,7 @@
                     </div>
                     <p class="mt-3 text-sm font-semibold text-slate-900 dark:text-slate-100">Camera Stream Placeholder</p>
                     <p class="mt-1 text-xs text-slate-600 dark:text-slate-300">
-                      Tempatkan video/gambar dummy lahan di area ini (misal: tag <code class="rounded bg-white px-1 py-0.5 dark:bg-slate-900">&lt;video&gt;</code> / <code class="rounded bg-white px-1 py-0.5 dark:bg-slate-900">&lt;img&gt;</code>).
+                      Place a dummy field video/image here (e.g., <code class="rounded bg-white px-1 py-0.5 dark:bg-slate-900">&lt;video&gt;</code> / <code class="rounded bg-white px-1 py-0.5 dark:bg-slate-900">&lt;img&gt;</code>).
                     </p>
                     <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-[11px] text-slate-600 dark:text-slate-300">
                       <span class="rounded-full bg-slate-100 px-3 py-1 dark:bg-slate-800">Resolution: 1280×720</span>
@@ -330,27 +326,27 @@
             <!-- Bottom info -->
             <div class="mt-4 grid gap-3 sm:grid-cols-3">
               <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-800/40">
-                <p class="text-[11px] text-slate-500 dark:text-slate-400">Area Terpantau</p>
-                <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">Sektor A1–A3</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">Coverage Area</p>
+                <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">Sectors A1–A3</p>
               </div>
               <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-800/40">
-                <p class="text-[11px] text-slate-500 dark:text-slate-400">Kondisi Cuaca</p>
-                <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">Cerah (Simulasi)</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">Weather</p>
+                <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">Clear (Simulation)</p>
               </div>
               <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-800/40">
-                <p class="text-[11px] text-slate-500 dark:text-slate-400">Rekomendasi</p>
-                <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">Lanjut pemetaan</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">Recommendation</p>
+                <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">Continue mapping</p>
               </div>
             </div>
 
             <div class="mt-4 flex flex-wrap gap-2">
               <a href="index.html"
                  class="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
-                Kembali ke Dashboard
+                Back to Dashboard
               </a>
               <a href="control.html"
                  class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-4 py-3 text-xs font-semibold text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
-                Buka Control Panel
+                Open Control Panel
               </a>
             </div>
           </div>
@@ -358,7 +354,7 @@
 
         <!-- Footer -->
         <footer class="pb-6 pt-2 text-center text-[11px] text-slate-500 dark:text-slate-400">
-          © <span id="year">2025</span> AgroVision • Kelompok 06 • Live Camera (Simulasi)
+          © <span id="year">2025</span> AgroVision • Team 06 • Live Camera (Simulation)
         </footer>
       </main>
     </div>
@@ -373,6 +369,7 @@
 
   <!-- Scripts -->
   <script src="js/live.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
