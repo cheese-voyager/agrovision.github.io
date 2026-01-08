@@ -383,8 +383,89 @@
 
   <!-- Scripts -->
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+  const ctx = document.getElementById("altitude-chart").getContext("2d");
+
+  const chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: [],
+      datasets: [{
+        label: "Altitude",
+        data: [],
+        fill: false
+      }]
+    },
+    options: {
+      animation: false
+    }
+  });
+
+  const API_URL = "http://192.168.137.6:5000/get_attitude";
+  async function updateChart() {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+
+    const now = new Date().toLocaleTimeString();
+
+    chart.data.labels.push(now);
+    chart.data.datasets[0].data.push(data.altitude);
+
+    // limit to last 20 points
+    if (chart.data.labels.length > 20) {
+      chart.data.labels.shift();
+      chart.data.datasets[0].data.shift();
+    }
+
+    chart.update();
+  }
+
+  setInterval(updateChart, 100);
+</script>
+
   <script defer src="js/i18n.js"></script>
   <script defer src="js/dashboard.js"></script>
   <script defer src="js/main.js"></script>
 </body>
+
+<script>
+
+  async function fetchTelemetry() {
+    try {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+
+      console.log("Telemetry:", data);
+
+      // Update KPI text values
+      document.getElementById("pitch").innerText = data.pitch;
+      document.getElementById("yaw").innerText = data.yaw ;
+      document.getElementById("roll").innerText = data.roll ;
+
+      // Soil label update
+      const soilLabel = document.getElementById("soil-status-label");
+      soilLabel.innerText = data.soil_status;
+
+      // Change color dynamically
+      if (data.soil_status === "Suitable") {
+        soilLabel.className =
+          "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700";
+      } else {
+        soilLabel.className =
+          "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700";
+      }
+    } catch (err) {
+      console.error("Failed fetching telemetry:", err);
+      document.getElementById("drone-status").innerText = "Offline";
+    }
+  }
+
+  // Fetch every 1 second
+  setInterval(fetchTelemetry, 100);
+
+  // First call immediately
+  fetchTelemetry();
+</script>
+
+
 </html>
