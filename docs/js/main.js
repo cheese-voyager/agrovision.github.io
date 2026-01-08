@@ -33,12 +33,44 @@
     return getSavedTheme() || getSystemTheme();
   }
 
+  // Inline SVG icons (no emoji)
+  function sunIconSvg() {
+    return `
+      <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2"></path><path d="M12 20v2"></path>
+        <path d="M4.93 4.93l1.41 1.41"></path><path d="M17.66 17.66l1.41 1.41"></path>
+        <path d="M2 12h2"></path><path d="M20 12h2"></path>
+        <path d="M4.93 19.07l1.41-1.41"></path><path d="M17.66 6.34l1.41-1.41"></path>
+      </svg>
+    `.trim();
+  }
+
+  function moonIconSvg() {
+    return `
+      <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3c.2 0 .4 0 .6.02A7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    `.trim();
+  }
+
   function updateThemeToggles(theme) {
     const isDark = theme === "dark";
+
     document.querySelectorAll("[data-theme-toggle]").forEach((btn) => {
       btn.setAttribute("aria-pressed", String(isDark));
+      btn.setAttribute("title", isDark ? "Switch to Light" : "Switch to Dark");
+
+      // Backward-compatible:
+      // If the HTML has <span data-theme-icon>...</span>, we inject SVG into it.
       const icon = btn.querySelector("[data-theme-icon]");
-      if (icon) icon.textContent = isDark ? "🌙" : "☀️";
+      if (icon) {
+        icon.innerHTML = isDark ? moonIconSvg() : sunIconSvg();
+      }
+
+      // Optional hint label if present
       const hint = btn.querySelector("[data-theme-hint]");
       if (hint) hint.textContent = isDark ? "Dark" : "Light";
     });
@@ -49,7 +81,6 @@
     const root = document.documentElement;
 
     root.classList.toggle("dark", t === "dark");
-    // extra hook (useful if you ever switch to data-attribute dark mode)
     root.setAttribute("data-theme", t);
     root.style.colorScheme = t;
 
