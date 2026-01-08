@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="AgroVision — Drone telemetry and soil monitoring dashboard (simulation)." />
+  <meta name="description" content="AgroVision — Drone telemetry and soil monitoring dashboard." />
   <title>AgroVision — Dashboard</title>
 
   <!-- Tailwind (CDN) -->
@@ -12,9 +12,7 @@
     // Enable class-based dark mode (required for manual theme toggle)
     try {
       tailwind.config = { darkMode: "class" };
-    } catch (e) {
-      /* ignore */
-    }
+    } catch (e) {}
   </script>
 
   <!-- Global styles -->
@@ -39,9 +37,7 @@
         document.documentElement.classList.toggle("dark", theme === "dark");
         document.documentElement.setAttribute("data-theme", theme);
         document.documentElement.style.colorScheme = theme === "dark" ? "dark" : "light";
-      } catch (e) {
-        /* ignore */
-      }
+      } catch (e) {}
     })();
   </script>
 </head>
@@ -62,7 +58,7 @@
           </div>
           <div class="leading-tight">
             <p class="text-sm font-semibold tracking-tight text-slate-900 dark:text-slate-100">AgroVision</p>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400">Drone Soil Monitoring (Simulation)</p>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Drone Soil Monitoring</p>
           </div>
         </a>
 
@@ -77,13 +73,32 @@
           <button type="button" data-theme-toggle
                   class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white p-2 text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                   aria-label="Toggle theme">
-            <span data-theme-icon aria-hidden="true">☀️</span>
+            <!-- no data-theme-icon (so main.js won't overwrite with emoji) -->
+            <span class="dark:hidden" aria-hidden="true">
+              <!-- Sun -->
+              <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M12 2v2"></path><path d="M12 20v2"></path>
+                <path d="M4.93 4.93l1.41 1.41"></path><path d="M17.66 17.66l1.41 1.41"></path>
+                <path d="M2 12h2"></path><path d="M20 12h2"></path>
+                <path d="M4.93 19.07l1.41-1.41"></path><path d="M17.66 6.34l1.41-1.41"></path>
+              </svg>
+            </span>
+            <span class="hidden dark:inline" aria-hidden="true">
+              <!-- Moon -->
+              <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3c.2 0 .4 0 .6.02A7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            </span>
             <span class="sr-only">Toggle theme</span>
           </button>
 
           <a href="settings.html"
              class="hidden sm:inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
-            <span aria-hidden="true">⚙️</span>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+              <path d="M19.4 15a1.8 1.8 0 0 0 .4 2l.1.1a2 2 0 0 1-1.4 3.4 2 2 0 0 1-1.4-.6l-.1-.1a1.8 1.8 0 0 0-2-.4 1.8 1.8 0 0 0-1 1.7V22a2 2 0 0 1-4 0v-.1a1.8 1.8 0 0 0-1-1.7 1.8 1.8 0 0 0-2 .4l-.1.1A2 2 0 0 1 2.1 19a2 2 0 0 1 .6-1.4l.1-.1a1.8 1.8 0 0 0 .4-2 1.8 1.8 0 0 0-1.7-1H1a2 2 0 0 1 0-4h.1a1.8 1.8 0 0 0 1.7-1 1.8 1.8 0 0 0-.4-2l-.1-.1A2 2 0 0 1 4 2.1a2 2 0 0 1 1.4.6l.1.1a1.8 1.8 0 0 0 2 .4 1.8 1.8 0 0 0 1-1.7V1a2 2 0 0 1 4 0v.1a1.8 1.8 0 0 0 1 1.7 1.8 1.8 0 0 0 2-.4l.1-.1A2 2 0 0 1 21.9 5a2 2 0 0 1-.6 1.4l-.1.1a1.8 1.8 0 0 0-.4 2 1.8 1.8 0 0 0 1.7 1H23a2 2 0 0 1 0 4h-.1a1.8 1.8 0 0 0-1.7 1Z"></path>
+            </svg>
             <span>Settings</span>
           </a>
 
@@ -91,18 +106,27 @@
           <button id="mobile-menu-button"
                   class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white p-2 text-slate-700 shadow-sm hover:bg-slate-50 md:hidden dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                   aria-label="Open navigation menu">
-            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5">
-              <path fill="currentColor" d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"></path>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 6h16"></path>
+              <path d="M4 12h16"></path>
+              <path d="M4 18h16"></path>
             </svg>
           </button>
 
           <!-- Avatar (desktop) -->
           <div class="hidden md:flex items-center gap-3 pl-2">
             <div class="text-right leading-tight">
-              <p class="text-xs font-semibold text-slate-800 dark:text-slate-100">Team 06</p>
+              <p class="text-xs font-semibold text-slate-800 dark:text-slate-100">Team 05</p>
               <p class="text-[11px] text-slate-500 dark:text-slate-400">Basic Programming</p>
             </div>
-            <div class="h-9 w-9 rounded-xl bg-slate-200 dark:bg-slate-700"></div>
+
+            <div class="grid h-9 w-9 place-items-center rounded-xl bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-100">
+              <!-- User Icon -->
+              <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21a8 8 0 0 0-16 0"></path>
+                <path d="M12 13a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z"></path>
+              </svg>
+            </div>
           </div>
         </div>
       </div>
@@ -120,7 +144,11 @@
       <div class="flex items-center justify-between border-b border-slate-200 px-4 py-4 dark:border-slate-800">
         <div class="flex items-center gap-3">
           <div class="grid h-9 w-9 place-items-center rounded-xl bg-green-600 text-white">
-            <span aria-hidden="true">🌿</span>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 20A7 7 0 0 1 4 13V7a3 3 0 0 1 3-3h6a7 7 0 0 1 7 7v2a7 7 0 0 1-7 7h-2Z"></path>
+              <path d="M11 20v-8"></path>
+              <path d="M8 12c2 2 5 2 8 2"></path>
+            </svg>
           </div>
           <div class="leading-tight">
             <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">AgroVision</p>
@@ -131,29 +159,58 @@
                 class="rounded-lg border border-slate-200 p-2 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800"
                 aria-label="Close"
                 onclick="document.getElementById('mobile-menu').classList.add('hidden')">
-          <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5 text-slate-800 dark:text-slate-100">
-            <path fill="currentColor" d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"></path>
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5 text-slate-800 dark:text-slate-100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6 6 18"></path>
+            <path d="M6 6l12 12"></path>
           </svg>
         </button>
       </div>
 
       <nav class="p-4 text-sm">
         <a href="index.html" class="flex items-center gap-3 rounded-xl bg-green-50 px-3 py-2 font-medium text-green-700 dark:bg-green-900/30 dark:text-green-300">
-          <span aria-hidden="true">📊</span> Dashboard
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3v18h18"></path>
+            <path d="M7 14v4"></path>
+            <path d="M12 10v8"></path>
+            <path d="M17 6v12"></path>
+          </svg>
+          Dashboard
         </a>
+
         <a href="control.html" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
-          <span aria-hidden="true">🎮</span> Control Panel
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 21v-7"></path>
+            <path d="M4 10V3"></path>
+            <path d="M12 21v-9"></path>
+            <path d="M12 8V3"></path>
+            <path d="M20 21v-5"></path>
+            <path d="M20 12V3"></path>
+            <path d="M2 14h4"></path>
+            <path d="M10 8h4"></path>
+            <path d="M18 16h4"></path>
+          </svg>
+          Control Panel
         </a>
+
         <a href="live.html" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
-          <span aria-hidden="true">📹</span> Live Camera
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 7l-7 5 7 5V7Z"></path>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+          </svg>
+          Live Camera
         </a>
+
         <a href="settings.html" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
-          <span aria-hidden="true">⚙️</span> Settings
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+            <path d="M19.4 15a1.8 1.8 0 0 0 .4 2l.1.1a2 2 0 0 1-1.4 3.4 2 2 0 0 1-1.4-.6l-.1-.1a1.8 1.8 0 0 0-2-.4 1.8 1.8 0 0 0-1 1.7V22a2 2 0 0 1-4 0v-.1a1.8 1.8 0 0 0-1-1.7 1.8 1.8 0 0 0-2 .4l-.1.1A2 2 0 0 1 2.1 19a2 2 0 0 1 .6-1.4l.1-.1a1.8 1.8 0 0 0 .4-2 1.8 1.8 0 0 0-1.7-1H1a2 2 0 0 1 0-4h.1a1.8 1.8 0 0 0 1.7-1 1.8 1.8 0 0 0-.4-2l-.1-.1A2 2 0 0 1 4 2.1a2 2 0 0 1 1.4.6l.1.1a1.8 1.8 0 0 0 2 .4 1.8 1.8 0 0 0 1-1.7V1a2 2 0 0 1 4 0v.1a1.8 1.8 0 0 0 1 1.7 1.8 1.8 0 0 0 2-.4l.1-.1A2 2 0 0 1 21.9 5a2 2 0 0 1-.6 1.4l-.1.1a1.8 1.8 0 0 0-.4 2 1.8 1.8 0 0 0 1.7 1H23a2 2 0 0 1 0 4h-.1a1.8 1.8 0 0 0-1.7 1Z"></path>
+          </svg>
+          Settings
         </a>
 
         <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300">
           <p class="font-semibold text-slate-700 dark:text-slate-200">Tip</p>
-          <p class="mt-1">Change the time filter to refresh the altitude chart and soil suitability status (simulation).</p>
+          <p class="mt-1">Use the time range to adjust the chart window and monitoring view.</p>
         </div>
       </nav>
     </div>
@@ -166,16 +223,44 @@
       <aside class="hidden w-64 flex-col gap-4 md:flex">
         <nav class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <a href="index.html" class="flex items-center gap-3 rounded-xl bg-green-50 px-3 py-2 text-sm font-semibold text-green-700 dark:bg-green-900/30 dark:text-green-300">
-            <span aria-hidden="true">📊</span> Dashboard
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3v18h18"></path>
+              <path d="M7 14v4"></path>
+              <path d="M12 10v8"></path>
+              <path d="M17 6v12"></path>
+            </svg>
+            Dashboard
           </a>
+
           <a href="control.html" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
-            <span aria-hidden="true">🎮</span> Control Panel
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 21v-7"></path>
+              <path d="M4 10V3"></path>
+              <path d="M12 21v-9"></path>
+              <path d="M12 8V3"></path>
+              <path d="M20 21v-5"></path>
+              <path d="M20 12V3"></path>
+              <path d="M2 14h4"></path>
+              <path d="M10 8h4"></path>
+              <path d="M18 16h4"></path>
+            </svg>
+            Control Panel
           </a>
+
           <a href="live.html" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
-            <span aria-hidden="true">📹</span> Live Camera
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 7l-7 5 7 5V7Z"></path>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+            </svg>
+            Live Camera
           </a>
+
           <a href="settings.html" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">
-            <span aria-hidden="true">⚙️</span> Settings
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+              <path d="M19.4 15a1.8 1.8 0 0 0 .4 2l.1.1a2 2 0 0 1-1.4 3.4 2 2 0 0 1-1.4-.6l-.1-.1a1.8 1.8 0 0 0-2-.4 1.8 1.8 0 0 0-1 1.7V22a2 2 0 0 1-4 0v-.1a1.8 1.8 0 0 0-1-1.7 1.8 1.8 0 0 0-2 .4l-.1.1A2 2 0 0 1 2.1 19a2 2 0 0 1 .6-1.4l.1-.1a1.8 1.8 0 0 0 .4-2 1.8 1.8 0 0 0-1.7-1H1a2 2 0 0 1 0-4h.1a1.8 1.8 0 0 0 1.7-1 1.8 1.8 0 0 0-.4-2l-.1-.1A2 2 0 0 1 4 2.1a2 2 0 0 1 1.4.6l.1.1a1.8 1.8 0 0 0 2 .4 1.8 1.8 0 0 0 1-1.7V1a2 2 0 0 1 4 0v.1a1.8 1.8 0 0 0 1 1.7 1.8 1.8 0 0 0 2-.4l.1-.1A2 2 0 0 1 21.9 5a2 2 0 0 1-.6 1.4l-.1.1a1.8 1.8 0 0 0-.4 2 1.8 1.8 0 0 0 1.7 1H23a2 2 0 0 1 0 4h-.1a1.8 1.8 0 0 0-1.7 1Z"></path>
+            </svg>
+            Settings
           </a>
         </nav>
 
@@ -183,17 +268,40 @@
           <p class="text-xs font-semibold text-slate-700 dark:text-slate-200">Quick Actions</p>
           <div class="mt-3 grid gap-2">
             <a href="control.html" class="inline-flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
-              <span class="flex items-center gap-2"><span aria-hidden="true">🎮</span> Propeller Control</span>
-              <span aria-hidden="true">→</span>
+              <span class="flex items-center gap-2">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 21v-7"></path>
+                  <path d="M4 10V3"></path>
+                  <path d="M12 21v-9"></path>
+                  <path d="M12 8V3"></path>
+                  <path d="M20 21v-5"></path>
+                  <path d="M20 12V3"></path>
+                  <path d="M2 14h4"></path>
+                  <path d="M10 8h4"></path>
+                  <path d="M18 16h4"></path>
+                </svg>
+                Propeller Control
+              </span>
+              <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"></path>
+                <path d="M13 6l6 6-6 6"></path>
+              </svg>
             </a>
+
             <a href="live.html" class="inline-flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
-              <span class="flex items-center gap-2"><span aria-hidden="true">📹</span> Open Live Camera</span>
-              <span aria-hidden="true">→</span>
+              <span class="flex items-center gap-2">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 7l-7 5 7 5V7Z"></path>
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                </svg>
+                Open Live Camera
+              </span>
+              <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"></path>
+                <path d="M13 6l6 6-6 6"></path>
+              </svg>
             </a>
           </div>
-          <p class="mt-3 text-[11px] text-slate-500 dark:text-slate-400">
-            *All features are simulation (front-end only).
-          </p>
         </div>
       </aside>
 
@@ -205,18 +313,24 @@
             <div>
               <h2 class="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">Dashboard</h2>
               <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">
-                Flight telemetry and soil suitability overview (simulation).
+                Flight telemetry and soil suitability overview.
               </p>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
               <span class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
-                <span class="inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+                <span id="drone-status-dot" class="inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
                 <span id="drone-status">Online</span>
               </span>
+
               <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
-                <span aria-hidden="true">🧪</span>
-                Simulation Data
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 7a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V7z"></path>
+                  <path d="M8 7h8"></path>
+                  <path d="M8 11h8"></path>
+                  <path d="M8 15h5"></path>
+                </svg>
+                Live Data
               </span>
             </div>
           </div>
@@ -230,7 +344,7 @@
               <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Pitch</p>
               <span class="rounded-lg bg-slate-100 px-2 py-1 text-[11px] text-slate-600 dark:bg-slate-800 dark:text-slate-300">°</span>
             </div>
-            <p id="drone-pitch" class="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">0°</p>
+            <p id="drone-pitch" class="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">—</p>
             <p class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Drone tilt forward/backward</p>
           </div>
 
@@ -240,7 +354,7 @@
               <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Yaw</p>
               <span class="rounded-lg bg-slate-100 px-2 py-1 text-[11px] text-slate-600 dark:bg-slate-800 dark:text-slate-300">°</span>
             </div>
-            <p id="drone-yaw" class="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">0°</p>
+            <p id="drone-yaw" class="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">—</p>
             <p class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Drone heading direction</p>
           </div>
 
@@ -250,23 +364,23 @@
               <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Roll</p>
               <span class="rounded-lg bg-slate-100 px-2 py-1 text-[11px] text-slate-600 dark:bg-slate-800 dark:text-slate-300">°</span>
             </div>
-            <p id="drone-roll" class="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">0°</p>
+            <p id="drone-roll" class="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">—</p>
             <p class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Drone tilt left/right</p>
           </div>
 
-          <!-- Soil Suitability (tetap) -->
+          <!-- Soil Suitability -->
           <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
             <div class="flex items-start justify-between">
               <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Soil Suitability</p>
               <span class="rounded-lg bg-slate-100 px-2 py-1 text-[11px] text-slate-600 dark:bg-slate-800 dark:text-slate-300">AI</span>
             </div>
             <div class="mt-2 flex items-center justify-between gap-3">
-              <span id="soil-status-label" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700">
-                Suitable
-              </span>
+              <span id="soil-status-label"
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+                —</span>
               <span class="text-[11px] text-slate-500 dark:text-slate-400">Auto-update</span>
             </div>
-            <p class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Status changes when you update the time filter (simulation).</p>
+            <p class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Status is updated from backend telemetry.</p>
           </div>
         </section>
 
@@ -277,7 +391,7 @@
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Altitude Chart</h3>
-                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Drone altitude over time (simulation).</p>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Drone altitude over time.</p>
               </div>
 
               <div class="flex flex-wrap items-center gap-3">
@@ -306,15 +420,15 @@
             <div class="mt-4 grid gap-3 sm:grid-cols-3">
               <div class="rounded-2xl bg-slate-50 p-3 dark:bg-slate-800/40">
                 <p class="text-[11px] text-slate-500 dark:text-slate-400">Peak Altitude</p>
-                <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">≈ 60 m</p>
+                <p id="peak-alt" class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">—</p>
               </div>
               <div class="rounded-2xl bg-slate-50 p-3 dark:bg-slate-800/40">
                 <p class="text-[11px] text-slate-500 dark:text-slate-400">Average Altitude</p>
-                <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">≈ 35 m</p>
+                <p id="avg-alt" class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">—</p>
               </div>
               <div class="rounded-2xl bg-slate-50 p-3 dark:bg-slate-800/40">
                 <p class="text-[11px] text-slate-500 dark:text-slate-400">Stability</p>
-                <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">Good</p>
+                <p id="stability-label" class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">—</p>
               </div>
             </div>
           </div>
@@ -323,15 +437,33 @@
           <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-4">
             <div>
               <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Insights & Recommendations</h3>
-              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Suggested actions summary (simulation).</p>
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Suggested actions summary.</p>
             </div>
 
             <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-800/40">
               <p class="text-xs font-semibold text-slate-700 dark:text-slate-200">Soil Condition</p>
               <ul class="mt-3 space-y-2 text-xs text-slate-700 dark:text-slate-200">
-                <li class="flex gap-2"><span aria-hidden="true">✅</span><span>If <b>Suitable</b>, continue mapping priority areas.</span></li>
-                <li class="flex gap-2"><span aria-hidden="true">⚠️</span><span>If <b>Not Suitable</b>, check irrigation and moisture levels.</span></li>
-                <li class="flex gap-2"><span aria-hidden="true">🧪</span><span>Take a pH sample for verification (optional).</span></li>
+                <li class="flex gap-2">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" class="mt-0.5 h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                  <span>If <b>Suitable</b>, continue mapping priority areas.</span>
+                </li>
+                <li class="flex gap-2">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" class="mt-0.5 h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path>
+                    <path d="M12 9v4"></path>
+                    <path d="M12 17h.01"></path>
+                  </svg>
+                  <span>If <b>Not Suitable</b>, check irrigation and moisture levels.</span>
+                </li>
+                <li class="flex gap-2">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" class="mt-0.5 h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 2v7.5L6 17a5 5 0 0 0 4 5h4a5 5 0 0 0 4-5l-4-7.5V2"></path>
+                    <path d="M8.5 10h7"></path>
+                  </svg>
+                  <span>Take a pH sample for verification (optional).</span>
+                </li>
               </ul>
             </div>
 
@@ -368,7 +500,7 @@
 
         <!-- Footer -->
         <footer class="pb-6 pt-2 text-center text-[11px] text-slate-500 dark:text-slate-400">
-          © <span id="year">2025</span> AgroVision • Team 06 • Simulation Dashboard
+          © <span id="year">2025</span> AgroVision • Team 05 • Live Dashboard
         </footer>
       </main>
     </div>
@@ -383,89 +515,8 @@
 
   <!-- Scripts -->
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-  const ctx = document.getElementById("altitude-chart").getContext("2d");
-
-  const chart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: [],
-      datasets: [{
-        label: "Altitude",
-        data: [],
-        fill: false
-      }]
-    },
-    options: {
-      animation: false
-    }
-  });
-
-  const API_URL = "http://192.168.137.6:5000/get_attitude";
-  async function updateChart() {
-    const res = await fetch(API_URL);
-    const data = await res.json();
-
-    const now = new Date().toLocaleTimeString();
-
-    chart.data.labels.push(now);
-    chart.data.datasets[0].data.push(data.altitude);
-
-    // limit to last 20 points
-    if (chart.data.labels.length > 20) {
-      chart.data.labels.shift();
-      chart.data.datasets[0].data.shift();
-    }
-
-    chart.update();
-  }
-
-  setInterval(updateChart, 100);
-</script>
-
   <script defer src="js/i18n.js"></script>
   <script defer src="js/dashboard.js"></script>
   <script defer src="js/main.js"></script>
 </body>
-
-<script>
-
-  async function fetchTelemetry() {
-    try {
-      const res = await fetch(API_URL);
-      const data = await res.json();
-
-      console.log("Telemetry:", data);
-
-      // Update KPI text values
-      document.getElementById("pitch").innerText = data.pitch;
-      document.getElementById("yaw").innerText = data.yaw ;
-      document.getElementById("roll").innerText = data.roll ;
-
-      // Soil label update
-      const soilLabel = document.getElementById("soil-status-label");
-      soilLabel.innerText = data.soil_status;
-
-      // Change color dynamically
-      if (data.soil_status === "Suitable") {
-        soilLabel.className =
-          "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700";
-      } else {
-        soilLabel.className =
-          "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700";
-      }
-    } catch (err) {
-      console.error("Failed fetching telemetry:", err);
-      document.getElementById("drone-status").innerText = "Offline";
-    }
-  }
-
-  // Fetch every 1 second
-  setInterval(fetchTelemetry, 100);
-
-  // First call immediately
-  fetchTelemetry();
-</script>
-
-
 </html>
